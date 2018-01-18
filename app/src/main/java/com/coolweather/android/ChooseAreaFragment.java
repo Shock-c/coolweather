@@ -89,13 +89,13 @@ public class ChooseAreaFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {    //碎片的生命周期  在onCreateView返回时调用
         super.onActivityCreated(savedInstanceState);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (currentLevel == LEVEL_PROVINCE){
-                    selectedProvince = provinceList.get(position);
+                    selectedProvince = provinceList.get(position);//获取所选省的对象
                     queryCities();
                 } else if (currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
@@ -106,11 +106,11 @@ public class ChooseAreaFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), WeatherActivity.class);
                         intent.putExtra("weather_id",weatherId);
                         startActivity(intent);
-                        getActivity().finish();
+                        getActivity().finish();//关闭活动
                     } else if (getActivity() instanceof WeatherActivity){
                         WeatherActivity activity = (WeatherActivity) getActivity();
-                        activity.drawerLayout.closeDrawers();
-                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.drawerLayout.closeDrawers();//关闭所出现的抽屉
+                        activity.swipeRefreshLayout.setRefreshing(true);//第一次加载界面先刷新一次
                         activity.requestWeather(weatherId);
                     }
 
@@ -136,15 +136,15 @@ public class ChooseAreaFragment extends Fragment {
      */
     private void queryProvinces(){
         titleText.setText("中国");
-        backButton.setVisibility(View.GONE);
-        provinceList = DataSupport.findAll(Province.class);
+        backButton.setVisibility(View.GONE); //返回按钮不显示，当前不需要返回功能
+        provinceList = DataSupport.findAll(Province.class);  //litepal数据库查询
         if (provinceList.size() > 0){
             dataList.clear();
             for (Province province : provinceList){
                 dataList.add(province.getProvinceName());
             }
-            adapter.notifyDataSetChanged();
-            listView.setSelection(0);
+            adapter.notifyDataSetChanged();//当datalist发生改变时，通知刷新主线程UI
+            listView.setSelection(0);  //设置第一个item为在listview排第一个
             currentLevel = LEVEL_PROVINCE;
 
         } else {
@@ -230,7 +230,7 @@ public class ChooseAreaFragment extends Fragment {
                     result = Utility.handleCountyResponse(responseText,selectedCity.getId());
                 }
                 if (result){
-                    getActivity().runOnUiThread(new Runnable() {
+                    getActivity().runOnUiThread(new Runnable() {//更新UI线程
                         @Override
                         public void run() {
                             closeProgressDialog();
@@ -257,7 +257,7 @@ public class ChooseAreaFragment extends Fragment {
         if (progressDialog == null){
             progressDialog = new ProgressDialog(getActivity());
             progressDialog.setMessage("正在加载...");
-            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.setCanceledOnTouchOutside(false);//dialog弹出后会点击屏幕，dialog不消失；点击物理返回键dialog消失
         }
         progressDialog.show();
     }
